@@ -56,13 +56,34 @@ export default function Home() {
               and unfollow actions. Take control of your follower relationships.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200">
-                Analyze My Followers
-              </button>
-              <button className="w-full sm:w-auto border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                How To
-              </button>
+            <div className="flex flex-col gap-6 justify-center items-center max-w-md mx-auto">
+              {/*--------- input feild ----------*/}
+              <div className="w-full">
+                <label
+                  htmlFor="github-token"
+                  className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  GitHub Personal Access Token
+                </label>
+                <input
+                  type="password"
+                  id="github-token"
+                  placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                  className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+                <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                  We need your token to access GitHub API. Your token is never stored on our servers.
+                </p>
+              </div>
+
+              {/*--------- buttons ----------*/}
+              <div className="flex flex-col sm:flex-row gap-4 w-full">
+                <button className="flex-1 sm:flex-initial bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200">
+                  Analyze My Followers
+                </button>
+                <button className="flex-1 sm:flex-initial border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                  How To
+                </button>
+              </div>
             </div>
           </div>
         </div>
