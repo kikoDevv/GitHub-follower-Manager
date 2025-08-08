@@ -63,8 +63,9 @@ export default function UserCard({ user, type, isFollowingBack = false }: UserCa
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-200/50 dark:border-slate-700/50">
-      <div className="flex items-center justify-between">
+    <div className="bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-200/50 dark:border-slate-700/50">
+      {/* Desktop Layout */}
+      <div className="hidden sm:flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <img
             src={avatarUrl}
@@ -99,7 +100,7 @@ export default function UserCard({ user, type, isFollowingBack = false }: UserCa
               <button
                 onClick={handleUnfollow}
                 disabled={unfollowMutation.isPending}
-                className="flex items-center space-x-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors disabled:opacity-50">
+                className="flex items-center space-x-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors disabled:opacity-50 cursor-pointer">
                 <UserMinus className="w-4 h-4" />
                 <span>{unfollowMutation.isPending ? "Unfollowing..." : "Unfollow"}</span>
               </button>
@@ -107,7 +108,7 @@ export default function UserCard({ user, type, isFollowingBack = false }: UserCa
               <button
                 onClick={handleFollow}
                 disabled={followMutation.isPending}
-                className="flex items-center space-x-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors disabled:opacity-50">
+                className="flex items-center space-x-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors disabled:opacity-50 cursor-pointer">
                 <UserPlus className="w-4 h-4" />
                 <span>{followMutation.isPending ? "Following..." : "Follow Back"}</span>
               </button>
@@ -116,7 +117,7 @@ export default function UserCard({ user, type, isFollowingBack = false }: UserCa
             <button
               onClick={handleUnfollow}
               disabled={unfollowMutation.isPending}
-              className="flex items-center space-x-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors disabled:opacity-50">
+              className="flex items-center space-x-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors disabled:opacity-50 cursor-pointer">
               <UserMinus className="w-4 h-4" />
               <span>{unfollowMutation.isPending ? "Unfollowing..." : "Unfollow"}</span>
             </button>
@@ -125,7 +126,81 @@ export default function UserCard({ user, type, isFollowingBack = false }: UserCa
             href={`https://github.com/${username}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center space-x-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
+            className="flex items-center space-x-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors cursor-pointer">
+            <Github className="w-4 h-4" />
+            <span>Profile</span>
+          </a>
+        </div>
+      </div>
+
+      {/* Mobile Layout */}
+      <div className="sm:hidden">
+        <div className="flex items-center space-x-3 mb-4">
+          <img
+            src={avatarUrl}
+            alt={displayName}
+            className="w-12 h-12 rounded-full border-2 border-slate-200 dark:border-slate-600 flex-shrink-0"
+          />
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-slate-900 dark:text-white truncate">{displayName}</h3>
+            <p className="text-slate-600 dark:text-slate-400 text-sm truncate">@{username}</p>
+            <div className="flex flex-wrap gap-1 mt-1">
+              {type === "follower" && (
+                <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-1 rounded-full">
+                  Follows You
+                </span>
+              )}
+              {(type === "following" || type === "mutual") && (
+                <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-1 rounded-full">
+                  Following
+                </span>
+              )}
+              {type === "mutual" && (
+                <span className="text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 px-2 py-1 rounded-full">
+                  Mutual
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Buttons - Full Width */}
+        <div className="grid grid-cols-2 gap-2">
+          {type === "follower" ? (
+            isFollowingBack ? (
+              <button
+                onClick={handleUnfollow}
+                disabled={unfollowMutation.isPending}
+                className="flex items-center justify-center space-x-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-3 py-2.5 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors disabled:opacity-50 text-sm font-medium cursor-pointer">
+                <UserMinus className="w-4 h-4" />
+                <span className="hidden xs:inline">{unfollowMutation.isPending ? "Unfollowing..." : "Unfollow"}</span>
+                <span className="xs:hidden">{unfollowMutation.isPending ? "..." : "Unfollow"}</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleFollow}
+                disabled={followMutation.isPending}
+                className="flex items-center justify-center space-x-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-3 py-2.5 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors disabled:opacity-50 text-sm font-medium cursor-pointer">
+                <UserPlus className="w-4 h-4" />
+                <span className="hidden xs:inline">{followMutation.isPending ? "Following..." : "Follow"}</span>
+                <span className="xs:hidden">{followMutation.isPending ? "..." : "Follow"}</span>
+              </button>
+            )
+          ) : (
+            <button
+              onClick={handleUnfollow}
+              disabled={unfollowMutation.isPending}
+              className="flex items-center justify-center space-x-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-3 py-2.5 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors disabled:opacity-50 text-sm font-medium cursor-pointer">
+              <UserMinus className="w-4 h-4" />
+              <span className="hidden xs:inline">{unfollowMutation.isPending ? "Unfollowing..." : "Unfollow"}</span>
+              <span className="xs:hidden">{unfollowMutation.isPending ? "..." : "Unfollow"}</span>
+            </button>
+          )}
+          <a
+            href={`https://github.com/${username}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center space-x-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors text-sm font-medium cursor-pointer">
             <Github className="w-4 h-4" />
             <span>Profile</span>
           </a>

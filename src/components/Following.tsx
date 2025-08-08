@@ -38,7 +38,7 @@ export default function Following({ searchQuery }: FollowingProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {filteredFollowing.map((user: any) => (
         <UserCard key={user.id} user={user} type="following" />
       ))}

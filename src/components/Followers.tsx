@@ -46,7 +46,7 @@ export default function Followers({ searchQuery }: FollowersProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {filteredFollowers.map((user: any) => {
         /*--------- Check if you're already following this follower back ----------*/
         const isFollowingBack = followingData?.some((followingUser: any) => followingUser.id === user.id) || false;

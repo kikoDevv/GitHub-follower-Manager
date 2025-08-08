@@ -65,14 +65,16 @@ export default function Home() {
                 className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
                 About
               </a>
-              <button className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-lg hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors">
+              <a
+                href="#start"
+                className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-lg hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors">
                 Get Started
-              </button>
+              </a>
             </nav>
           </div>
         </div>
       </header>
-      <section className="relative py-20 sm:py-32">
+      <section id="start" className="relative py-20 sm:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="flex justify-center mb-8">
@@ -94,8 +96,8 @@ export default function Home() {
             </h1>
 
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto mb-10">
-              Discover who follows you back and who doesn't. Easily manage your GitHub connections with one-click follow
-              and unfollow actions. Take control of your follower relationships.
+              Clean up your GitHub network effortlessly. See mutual followers, identify one-way connections, and manage
+              your following list with smart insights. Build meaningful developer relationships.
             </p>
 
             <div className="flex flex-col gap-6 justify-center items-center max-w-md mx-auto">
@@ -115,21 +117,26 @@ export default function Home() {
                   className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 />
                 <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                  We need your token to access GitHub API. Your token is stored securely in your browser session only.
+                  We need your token to access GitHub API. Your token is stored only in your browser session, and not
+                  any server.
                 </p>
               </div>
 
               {/*--------- buttons ----------*/}
-              <div className="flex flex-col sm:flex-row gap-4 w-full">
+              <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
                 <button
                   onClick={handleGetData}
                   disabled={isLoading}
                   className="flex-1 sm:flex-initial bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
-                  {isLoading ? "Validating Token..." : "Get The Data"}
+                  {isLoading ? "Validating Token..." : "Start Analysis"}
                 </button>
-                <button className="flex-1 sm:flex-initial border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                  How To
-                </button>
+                <a
+                  href="https://github.com/settings/tokens/new?scopes=user:follow,read:user&description=GitHub%20Follower%20Manager"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 sm:flex-initial border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-center cursor-pointer">
+                  Generate Token
+                </a>
               </div>
             </div>
           </div>
@@ -175,8 +182,8 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">One-Click Actions</h3>
               <p className="text-slate-600 dark:text-slate-400">
-                Follow or unfollow users with a single click. Bulk actions available for managing multiple connections
-                efficiently.
+                Follow-unfollow users, Visit thier profile with a single click. Bulk actions available for managing
+                multiple connections efficiently.
               </p>
             </div>
 
@@ -187,8 +194,8 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">Safe & Real-time</h3>
               <p className="text-slate-600 dark:text-slate-400">
-                Secure GitHub API integration with real-time synchronization. Your data stays protected while getting
-                instant updates on follower changes.
+                We don't collect or store your GitHub token anywhere. It stays securely in your browser session only,
+                ensuring complete privacy while providing real-time follower updates.
               </p>
             </div>
           </div>

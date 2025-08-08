@@ -103,7 +103,7 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/*--------- Cards as Tabs ----------*/}
         <section className="bg-gray-700 p-2 rounded-2xl mb-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-2">
             <button
               onClick={() => setActiveTab("followers")}
               className={`group relative bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800/80 rounded-2xl p-6 border transition-all duration-300 text-left hover:shadow-xl hover:-translate-y-1 cursor-pointer ${

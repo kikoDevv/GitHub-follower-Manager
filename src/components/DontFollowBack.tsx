@@ -47,7 +47,7 @@ export default function DontFollowBack({ searchQuery }: DontFollowBackProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {filteredNonFollowersBack.map((user: any) => (
         <UserCard key={user.id} user={user} type="nonFollower" />
       ))}
