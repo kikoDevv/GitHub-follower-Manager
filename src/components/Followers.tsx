@@ -12,15 +12,22 @@ interface FollowersProps {
 export default function Followers({ searchQuery }: FollowersProps) {
   const {
     data: followersData,
-    isLoading,
-    error,
+    isLoading: followersLoading,
+    error: followersError,
   } = useQuery({
     queryKey: ["userData", "followers"],
     queryFn: () => getGithubData("followers"),
   });
 
+  const { data: followingData, isLoading: followingLoading } = useQuery({
+    queryKey: ["userData", "following"],
+    queryFn: () => getGithubData("following"),
+  });
+
+  const isLoading = followersLoading || followingLoading;
+
   if (isLoading) return <LoadingState />;
-  if (error) return <div>Error loading followers</div>;
+  if (followersError) return <div>Error loading followers</div>;
 
   const filteredFollowers =
     followersData?.filter(
@@ -35,9 +42,12 @@ export default function Followers({ searchQuery }: FollowersProps) {
 
   return (
     <div className="space-y-4">
-      {filteredFollowers.map((user: any) => (
-        <UserCard key={user.id} user={user} type="follower" />
-      ))}
+      {filteredFollowers.map((user: any) => {
+        /*--------- Check if you're already following this follower back ----------*/
+        const isFollowingBack = followingData?.some((followingUser: any) => followingUser.id === user.id) || false;
+
+        return <UserCard key={user.id} user={user} type="follower" isFollowingBack={isFollowingBack} />;
+      })}
     </div>
   );
 }

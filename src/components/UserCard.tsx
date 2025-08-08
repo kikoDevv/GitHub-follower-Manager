@@ -11,9 +11,10 @@ interface UserCardProps {
     avatar?: string;
   };
   type: "follower" | "following" | "mutual" | "nonFollower";
+  isFollowingBack?: boolean; // New prop to indicate if you're following this person back
 }
 
-export default function UserCard({ user, type }: UserCardProps) {
+export default function UserCard({ user, type, isFollowingBack = false }: UserCardProps) {
   const handleFollow = (userId: number) => {
     console.log("Following user:", userId);
   };
@@ -58,19 +59,28 @@ export default function UserCard({ user, type }: UserCardProps) {
           </div>
         </div>
         <div className="flex space-x-2">
-          {type === "following" || type === "mutual" ? (
+          {type === "follower" ? (
+            isFollowingBack ? (
+              <button
+                onClick={() => handleUnfollow(user.id)}
+                className="flex items-center space-x-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors">
+                <UserMinus className="w-4 h-4" />
+                <span>Unfollow</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => handleFollow(user.id)}
+                className="flex items-center space-x-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
+                <UserPlus className="w-4 h-4" />
+                <span>Follow Back</span>
+              </button>
+            )
+          ) : (
             <button
               onClick={() => handleUnfollow(user.id)}
               className="flex items-center space-x-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors">
               <UserMinus className="w-4 h-4" />
               <span>Unfollow</span>
-            </button>
-          ) : (
-            <button
-              onClick={() => handleFollow(user.id)}
-              className="flex items-center space-x-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
-              <UserPlus className="w-4 h-4" />
-              <span>Follow</span>
             </button>
           )}
           <a

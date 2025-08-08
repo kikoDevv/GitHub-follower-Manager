@@ -1,5 +1,6 @@
 "use server";
 import axios from "axios";
+import { X } from "lucide-react";
 
 const header = {
   Authorization: `token ${process.env.GITHUB_TOKEN}`,
@@ -25,11 +26,31 @@ export const getGithubData = async (dataType: string) => {
   }
 
   try {
-    const response = await axios.get(endpoint, {
-      headers: header,
-    });
-    console.log(`----${dataType} data:`, response.data);
-    return response.data;
+    if (dataType === "userInfo") {
+      const response = await axios.get(endpoint, {
+        headers: header,
+      });
+      console.log(`----${dataType} data:`, response.data);
+      return response.data;
+    }
+    let allData: any[] = [];
+    let page = 1;
+    let hasMoreData = true;
+
+    while (hasMoreData) {
+      const response = await axios.get(`${endpoint}?page=${page}&per_page=100`, {
+        headers: header,
+      });
+
+      const data = response.data;
+      allData = allData.concat(data);
+      hasMoreData = data.length === 100;
+      page++;
+      console.log(`----${dataType} page ${page - 1}:`, data.length, "items");
+    }
+
+    console.log(`----Total ${dataType}:`, allData.length, "items");
+    return allData;
   } catch (error) {
     console.log(`error in get ${dataType}:`, error);
     throw error;
