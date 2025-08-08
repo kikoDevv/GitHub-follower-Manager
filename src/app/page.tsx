@@ -77,9 +77,11 @@ export default function Home() {
 
               {/*--------- buttons ----------*/}
               <div className="flex flex-col sm:flex-row gap-4 w-full">
-                <button className="flex-1 sm:flex-initial bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200">
-                  Analyze My Followers
-                </button>
+                <a href="/dashboard">
+                  <button className="flex-1 sm:flex-initial bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200">
+                    Get The Data
+                  </button>
+                </a>
                 <button className="flex-1 sm:flex-initial border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                   How To
                 </button>
