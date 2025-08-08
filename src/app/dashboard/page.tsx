@@ -1,8 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Github, Users, UserPlus, UserMinus, ArrowLeft, Search, Filter, RefreshCw, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { getGithubData } from "@/server/getData";
+import { useRouter } from "next/navigation";
+import { fetchUserData } from "@/lib/api";
+import { useToken } from "@/contexts/TokenContext";
 import Followers from "@/components/Followers";
 import Following from "@/components/Following";
 import Mutual from "@/components/Mutual";
@@ -11,17 +13,35 @@ import DontFollowBack from "@/components/DontFollowBack";
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("followers");
   const [searchQuery, setSearchQuery] = useState("");
+  const { token, clearToken } = useToken();
+  const router = useRouter();
+  useEffect(() => {
+    if (!token) {
+      router.push("/");
+    }
+  }, [token, router]);
+
+  const handleBackToHome = () => {
+    clearToken();
+    router.push("/");
+  };
 
   /*--------- query for getting counts ----------*/
   const { data: followersData } = useQuery({
     queryKey: ["userData", "followers"],
-    queryFn: () => getGithubData("followers"),
+    queryFn: () => fetchUserData("followers", token!),
+    enabled: !!token,
   });
 
   const { data: followingData } = useQuery({
     queryKey: ["userData", "following"],
-    queryFn: () => getGithubData("following"),
+    queryFn: () => fetchUserData("following", token!),
+    enabled: !!token,
   });
+
+  if (!token) {
+    return null; // Will redirect to home
+  }
 
   /*--------- Calculate counts ----------*/
   const followersCount = followersData?.length || 0;
@@ -61,7 +81,9 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center space-x-4">
-              <button className="flex items-center space-x-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+              <button
+                onClick={handleBackToHome}
+                className="flex items-center space-x-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
                 <ArrowLeft className="w-5 h-5" />
                 <span>Back</span>
               </button>

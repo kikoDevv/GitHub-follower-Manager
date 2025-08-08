@@ -5,6 +5,13 @@ export async function PUT(request: NextRequest) {
   try {
     const { username } = await request.json();
 
+    /*------------------- Get token from headers -------------------*/
+    const token = request.headers.get("authorization")?.replace("Bearer ", "");
+
+    if (!token) {
+      return NextResponse.json({ error: "GitHub token is required" }, { status: 401 });
+    }
+
     if (!username) {
       return NextResponse.json({ error: "Username is required" }, { status: 400 });
     }
@@ -14,7 +21,7 @@ export async function PUT(request: NextRequest) {
       {},
       {
         headers: {
-          Authorization: `token ${process.env.GITHUB_TOKEN}`,
+          Authorization: `token ${token}`,
           Accept: "application/vnd.github.v3+json",
           "Content-Length": "0",
         },
@@ -32,6 +39,11 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const { username } = await request.json();
+    const token = request.headers.get("authorization")?.replace("Bearer ", "");
+
+    if (!token) {
+      return NextResponse.json({ error: "GitHub token is required" }, { status: 401 });
+    }
 
     if (!username) {
       return NextResponse.json({ error: "Username is required" }, { status: 400 });
@@ -39,7 +51,7 @@ export async function DELETE(request: NextRequest) {
 
     const response = await axios.delete(`https://api.github.com/user/following/${username}`, {
       headers: {
-        Authorization: `token ${process.env.GITHUB_TOKEN}`,
+        Authorization: `token ${token}`,
         Accept: "application/vnd.github.v3+json",
       },
     });

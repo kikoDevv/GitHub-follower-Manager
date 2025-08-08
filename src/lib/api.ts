@@ -1,6 +1,10 @@
 /*------------------- API functions -------------------*/
-export const fetchUserData = async (dataType: string = "userInfo") => {
-  const response = await fetch(`/api/user?type=${dataType}`);
+export const fetchUserData = async (dataType: string = "userInfo", token: string) => {
+  const response = await fetch(`/api/user?type=${dataType}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   if (!response.ok) {
     throw new Error(`Failed to fetch ${dataType}`);
@@ -10,11 +14,12 @@ export const fetchUserData = async (dataType: string = "userInfo") => {
 };
 
 /*------------------- Follow/Unfollow functions -------------------*/
-export const followUser = async (username: string) => {
+export const followUser = async (username: string, token: string) => {
   const response = await fetch("/api/follow", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ username }),
   });
@@ -27,11 +32,12 @@ export const followUser = async (username: string) => {
   return response.json();
 };
 
-export const unfollowUser = async (username: string) => {
+export const unfollowUser = async (username: string, token: string) => {
   const response = await fetch("/api/follow", {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ username }),
   });

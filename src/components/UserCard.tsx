@@ -2,6 +2,7 @@ import React from "react";
 import { Github, UserPlus, UserMinus } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { followUser, unfollowUser } from "@/lib/api";
+import { useToken } from "@/contexts/TokenContext";
 
 interface UserCardProps {
   user: {
@@ -18,13 +19,15 @@ interface UserCardProps {
 
 export default function UserCard({ user, type, isFollowingBack = false }: UserCardProps) {
   const queryClient = useQueryClient();
+  const { token } = useToken();
   const username = user.login || user.username || "";
   const displayName = user.name || username;
   const avatarUrl = user.avatar_url || user.avatar || "https://github.com/github.png";
 
-  // Follow mutation
+  /*--------- followers mutation ----------*/
+
   const followMutation = useMutation({
-    mutationFn: followUser,
+    mutationFn: (username: string) => followUser(username, token!),
     onSuccess: () => {
       // Invalidate and refetch related queries
       queryClient.invalidateQueries({ queryKey: ["userData", "followers"] });
@@ -36,9 +39,10 @@ export default function UserCard({ user, type, isFollowingBack = false }: UserCa
     },
   });
 
-  // Unfollow mutation
+  /*--------- unfollowers mutation ----------*/
+
   const unfollowMutation = useMutation({
-    mutationFn: unfollowUser,
+    mutationFn: (username: string) => unfollowUser(username, token!),
     onSuccess: () => {
       // Invalidate and refetch related queries
       queryClient.invalidateQueries({ queryKey: ["userData", "followers"] });

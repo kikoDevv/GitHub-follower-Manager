@@ -1,7 +1,49 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Github, Users, TrendingUp, Shield, Zap, BarChart3 } from "lucide-react";
+import { useToken } from "@/contexts/TokenContext";
 
 export default function Home() {
+  const [tokenInput, setTokenInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { setToken } = useToken();
+  const router = useRouter();
+
+  const handleGetData = async () => {
+    if (!tokenInput.trim()) {
+      alert("Please enter your GitHub Personal Access Token");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      {
+        /*--------- Test the token first ----------*/
+      }
+      const response = await fetch("https://api.github.com/user", {
+        headers: {
+          Authorization: `token ${tokenInput.trim()}`,
+          Accept: "application/vnd.github.v3+json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Invalid token or API error");
+      }
+
+      {
+        /*--------- If successful, save token and navigate to dashboard ----------*/
+      }
+      setToken(tokenInput.trim());
+      router.push("/dashboard");
+    } catch (error) {
+      alert("Invalid GitHub token. Please check your token and try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
       {/*--------- header ----------*/}
@@ -67,21 +109,24 @@ export default function Home() {
                 <input
                   type="password"
                   id="github-token"
+                  value={tokenInput}
+                  onChange={(e) => setTokenInput(e.target.value)}
                   placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
                   className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 />
                 <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                  We need your token to access GitHub API. Your token is never stored on our servers.
+                  We need your token to access GitHub API. Your token is stored securely in your browser session only.
                 </p>
               </div>
 
               {/*--------- buttons ----------*/}
               <div className="flex flex-col sm:flex-row gap-4 w-full">
-                <a href="/dashboard">
-                  <button className="flex-1 sm:flex-initial bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200">
-                    Get The Data
-                  </button>
-                </a>
+                <button
+                  onClick={handleGetData}
+                  disabled={isLoading}
+                  className="flex-1 sm:flex-initial bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                  {isLoading ? "Validating Token..." : "Get The Data"}
+                </button>
                 <button className="flex-1 sm:flex-initial border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                   How To
                 </button>

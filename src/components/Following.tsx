@@ -1,6 +1,7 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getGithubData } from "@/server/getData";
+import { fetchUserData } from "@/lib/api";
+import { useToken } from "@/contexts/TokenContext";
 import UserCard from "./UserCard";
 import LoadingState from "./LoadingState";
 import EmptyState from "./EmptyState";
@@ -10,13 +11,16 @@ interface FollowingProps {
 }
 
 export default function Following({ searchQuery }: FollowingProps) {
+  const { token } = useToken();
+
   const {
     data: followingData,
     isLoading,
     error,
   } = useQuery({
     queryKey: ["userData", "following"],
-    queryFn: () => getGithubData("following"),
+    queryFn: () => fetchUserData("following", token!),
+    enabled: !!token,
   });
 
   if (isLoading) return <LoadingState />;
