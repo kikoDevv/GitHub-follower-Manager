@@ -2,15 +2,24 @@
 import React, { useState } from "react";
 import { Github, Users, UserPlus, UserMinus, ArrowLeft, Search, Filter, RefreshCw, X } from "lucide-react";
 import { getMainUser } from "@/server/getUserInfo";
+import { useQuery } from "@tanstack/react-query";
+
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("followers");
   const [searchQuery, setSearchQuery] = useState("");
 
   /*--------- query for get main user info ----------*/
+  const {
+    data: userData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["userData"],
+    queryFn: getMainUser,
+  });
 
-  const user = getMainUser();
-  console.log(user);
+  console.log(userData);
 
   /*--------- example data ----------*/
 
