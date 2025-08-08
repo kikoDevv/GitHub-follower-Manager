@@ -1,146 +1,58 @@
 "use client";
 import React, { useState } from "react";
 import { Github, Users, UserPlus, UserMinus, ArrowLeft, Search, Filter, RefreshCw, X } from "lucide-react";
-import { getMainUser } from "@/server/getUserInfo";
 import { useQuery } from "@tanstack/react-query";
-
+import { getGithubData } from "@/server/getData";
+import Followers from "@/components/Followers";
+import Following from "@/components/Following";
+import Mutual from "@/components/Mutual";
+import DontFollowBack from "@/components/DontFollowBack";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("followers");
   const [searchQuery, setSearchQuery] = useState("");
 
-  /*--------- query for get main user info ----------*/
-  const {
-    data: userData,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["userData"],
-    queryFn: getMainUser,
+  /*--------- query for getting counts ----------*/
+  const { data: followersData } = useQuery({
+    queryKey: ["userData", "followers"],
+    queryFn: () => getGithubData("followers"),
   });
 
-  console.log(userData);
+  const { data: followingData } = useQuery({
+    queryKey: ["userData", "following"],
+    queryFn: () => getGithubData("following"),
+  });
 
-  /*--------- example data ----------*/
+  /*--------- Calculate counts ----------*/
+  const followersCount = followersData?.length || 0;
+  const followingCount = followingData?.length || 0;
 
-  const mockUsers = [
-    {
-      id: 1,
-      username: "kiko",
-      name: "Nasrolla",
-      avatar: "https://github.com/github.png",
-      isFollowing: true,
-      followsBack: true,
-    },
-    {
-      id: 2,
-      username: "Mbappe",
-      name: "kylian mbappe",
-      avatar: "https://github.com/github.png",
-      isFollowing: true,
-      followsBack: false,
-    },
-  ];
+  /*--------- Calculate mutual (people you follow who also follow you) ----------*/
+  const mutualCount =
+    followingData?.filter((followingUser: any) =>
+      followersData?.some((follower: any) => follower.id === followingUser.id)
+    ).length || 0;
 
-  const followers = mockUsers.filter((user) => user.followsBack);
-  const following = mockUsers.filter((user) => user.isFollowing);
-  const mutual = mockUsers.filter((user) => user.isFollowing && user.followsBack);
-  const nonFollowers = mockUsers.filter((user) => user.isFollowing && !user.followsBack);
+  /*--------- Calculate non-followers (people you follow but who don't follow you back) ----------*/
+  const nonFollowersCount =
+    followingData?.filter(
+      (followingUser: any) => !followersData?.some((follower: any) => follower.id === followingUser.id)
+    ).length || 0;
 
-  const getCurrentList = () => {
-    let list;
+  const renderActiveTab = () => {
     switch (activeTab) {
       case "followers":
-        list = followers;
-        break;
+        return <Followers searchQuery={searchQuery} />;
       case "following":
-        list = following;
-        break;
+        return <Following searchQuery={searchQuery} />;
       case "mutual":
-        list = mutual;
-        break;
+        return <Mutual searchQuery={searchQuery} />;
       case "non-followers":
-        list = nonFollowers;
-        break;
+        return <DontFollowBack searchQuery={searchQuery} />;
       default:
-        list = followers;
+        return <Followers searchQuery={searchQuery} />;
     }
-    {
-      /*--------- Filter by search query ----------*/
-    }
-    if (searchQuery) {
-      list = list.filter(
-        (user) =>
-          user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          user.username.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    return list;
   };
-
-  const handleFollow = (userId: number) => {
-    console.log("Following user:", userId);
-  };
-
-  const handleUnfollow = (userId: number) => {
-    console.log("Unfollowing user:", userId);
-  };
-
-  const UserCard = ({ user }: { user: any }) => (
-    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-200/50 dark:border-slate-700/50">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <img
-            src={user.avatar}
-            alt={user.name}
-            className="w-12 h-12 rounded-full border-2 border-slate-200 dark:border-slate-600"
-          />
-          <div>
-            <h3 className="font-semibold text-slate-900 dark:text-white">{user.name}</h3>
-            <p className="text-slate-600 dark:text-slate-400">@{user.username}</p>
-            <div className="flex items-center space-x-2 mt-1">
-              {user.followsBack && (
-                <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-1 rounded-full">
-                  Follows You
-                </span>
-              )}
-              {user.isFollowing && (
-                <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-1 rounded-full">
-                  Following
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-        <div className="flex space-x-2">
-          {user.isFollowing ? (
-            <button
-              onClick={() => handleUnfollow(user.id)}
-              className="flex items-center space-x-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors">
-              <UserMinus className="w-4 h-4" />
-              <span>Unfollow</span>
-            </button>
-          ) : (
-            <button
-              onClick={() => handleFollow(user.id)}
-              className="flex items-center space-x-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
-              <UserPlus className="w-4 h-4" />
-              <span>Follow</span>
-            </button>
-          )}
-          <a
-            href={`https://github.com/${user.username}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center space-x-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
-            <Github className="w-4 h-4" />
-            <span>Profile</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
@@ -173,7 +85,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-slate-600 dark:text-slate-400 text-sm">Followers</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">{followers.length}</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{followersCount}</p>
               </div>
               <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-lg">
                 <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -185,7 +97,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-slate-600 dark:text-slate-400 text-sm">Following</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">{following.length}</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{followingCount}</p>
               </div>
               <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-lg">
                 <UserPlus className="w-6 h-6 text-green-600 dark:text-green-400" />
@@ -197,7 +109,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-slate-600 dark:text-slate-400 text-sm">Mutual</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">{mutual.length}</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{mutualCount}</p>
               </div>
               <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-lg">
                 <Users className="w-6 h-6 text-purple-600 dark:text-purple-400" />
@@ -209,7 +121,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-slate-600 dark:text-slate-400 text-sm">Don't Follow Back</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">{nonFollowers.length}</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{nonFollowersCount}</p>
               </div>
               <div className="bg-red-100 dark:bg-red-900/30 p-3 rounded-lg">
                 <UserMinus className="w-6 h-6 text-red-600 dark:text-red-400" />
@@ -223,10 +135,10 @@ export default function Dashboard() {
           <div className="border-b border-slate-200 dark:border-slate-700">
             <div className="flex flex-wrap">
               {[
-                { key: "followers", label: "Followers", count: followers.length },
-                { key: "following", label: "Following", count: following.length },
-                { key: "mutual", label: "Mutual", count: mutual.length },
-                { key: "non-followers", label: "Don't Follow Back", count: nonFollowers.length },
+                { key: "followers", label: "Followers", count: followersCount },
+                { key: "following", label: "Following", count: followingCount },
+                { key: "mutual", label: "Mutual", count: mutualCount },
+                { key: "non-followers", label: "Don't Follow Back", count: nonFollowersCount },
               ].map((tab) => (
                 <button
                   key={tab.key}
@@ -264,20 +176,7 @@ export default function Dashboard() {
         </div>
 
         {/*--------- User List ----------*/}
-        <div className="space-y-4">
-          {getCurrentList().map((user) => (
-            <UserCard key={user.id} user={user} />
-          ))}
-        </div>
-
-        {/*--------- Empty State ----------*/}
-        {getCurrentList().length === 0 && (
-          <div className="text-center py-12">
-            <Users className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">No users found</h3>
-            <p className="text-slate-600 dark:text-slate-400">Try adjusting your search or filters.</p>
-          </div>
-        )}
+        {renderActiveTab()}
       </div>
     </div>
   );
