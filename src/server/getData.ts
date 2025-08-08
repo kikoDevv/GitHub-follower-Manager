@@ -1,6 +1,5 @@
 "use server";
 import axios from "axios";
-import { X } from "lucide-react";
 
 const header = {
   Authorization: `token ${process.env.GITHUB_TOKEN}`,

@@ -4,7 +4,6 @@ import { getGithubData } from "@/server/getData";
 import UserCard from "./UserCard";
 import LoadingState from "./LoadingState";
 import EmptyState from "./EmptyState";
-import { X } from "lucide-react";
 
 interface DontFollowBackProps {
   searchQuery: string;

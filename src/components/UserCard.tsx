@@ -1,5 +1,7 @@
 import React from "react";
 import { Github, UserPlus, UserMinus } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { followUser, unfollowUser } from "@/lib/api";
 
 interface UserCardProps {
   user: {
@@ -15,17 +17,46 @@ interface UserCardProps {
 }
 
 export default function UserCard({ user, type, isFollowingBack = false }: UserCardProps) {
-  const handleFollow = (userId: number) => {
-    console.log("Following user:", userId);
-  };
-
-  const handleUnfollow = (userId: number) => {
-    console.log("Unfollowing user:", userId);
-  };
-
+  const queryClient = useQueryClient();
   const username = user.login || user.username || "";
   const displayName = user.name || username;
   const avatarUrl = user.avatar_url || user.avatar || "https://github.com/github.png";
+
+  // Follow mutation
+  const followMutation = useMutation({
+    mutationFn: followUser,
+    onSuccess: () => {
+      // Invalidate and refetch related queries
+      queryClient.invalidateQueries({ queryKey: ["userData", "followers"] });
+      queryClient.invalidateQueries({ queryKey: ["userData", "following"] });
+      console.log(`Successfully followed ${username}`);
+    },
+    onError: (error) => {
+      console.error("Failed to follow user:", error);
+    },
+  });
+
+  // Unfollow mutation
+  const unfollowMutation = useMutation({
+    mutationFn: unfollowUser,
+    onSuccess: () => {
+      // Invalidate and refetch related queries
+      queryClient.invalidateQueries({ queryKey: ["userData", "followers"] });
+      queryClient.invalidateQueries({ queryKey: ["userData", "following"] });
+      console.log(`Successfully unfollowed ${username}`);
+    },
+    onError: (error) => {
+      console.error("Failed to unfollow user:", error);
+    },
+  });
+
+  const handleFollow = () => {
+    followMutation.mutate(username);
+  };
+
+  const handleUnfollow = () => {
+    unfollowMutation.mutate(username);
+  };
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-200/50 dark:border-slate-700/50">
@@ -62,25 +93,28 @@ export default function UserCard({ user, type, isFollowingBack = false }: UserCa
           {type === "follower" ? (
             isFollowingBack ? (
               <button
-                onClick={() => handleUnfollow(user.id)}
-                className="flex items-center space-x-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors">
+                onClick={handleUnfollow}
+                disabled={unfollowMutation.isPending}
+                className="flex items-center space-x-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors disabled:opacity-50">
                 <UserMinus className="w-4 h-4" />
-                <span>Unfollow</span>
+                <span>{unfollowMutation.isPending ? "Unfollowing..." : "Unfollow"}</span>
               </button>
             ) : (
               <button
-                onClick={() => handleFollow(user.id)}
-                className="flex items-center space-x-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
+                onClick={handleFollow}
+                disabled={followMutation.isPending}
+                className="flex items-center space-x-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors disabled:opacity-50">
                 <UserPlus className="w-4 h-4" />
-                <span>Follow Back</span>
+                <span>{followMutation.isPending ? "Following..." : "Follow Back"}</span>
               </button>
             )
           ) : (
             <button
-              onClick={() => handleUnfollow(user.id)}
-              className="flex items-center space-x-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors">
+              onClick={handleUnfollow}
+              disabled={unfollowMutation.isPending}
+              className="flex items-center space-x-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors disabled:opacity-50">
               <UserMinus className="w-4 h-4" />
-              <span>Unfollow</span>
+              <span>{unfollowMutation.isPending ? "Unfollowing..." : "Unfollow"}</span>
             </button>
           )}
           <a
