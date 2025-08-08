@@ -1,12 +1,19 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import { Github, Users, UserPlus, UserMinus, ArrowLeft, Search, Filter, RefreshCw, X } from "lucide-react";
+import { getMainUser } from "@/server/getUserInfo";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("followers");
   const [searchQuery, setSearchQuery] = useState("");
 
-  {/*--------- example data ----------*/}
+  /*--------- query for get main user info ----------*/
+
+  const user = getMainUser();
+  console.log(user);
+
+  /*--------- example data ----------*/
+
   const mockUsers = [
     {
       id: 1,
@@ -21,8 +28,8 @@ export default function Dashboard() {
       username: "Mbappe",
       name: "kylian mbappe",
       avatar: "https://github.com/github.png",
-      isFollowing: false,
-      followsBack: true,
+      isFollowing: true,
+      followsBack: false,
     },
   ];
 
@@ -49,11 +56,14 @@ export default function Dashboard() {
       default:
         list = followers;
     }
-    {/*--------- Filter by search query ----------*/}
+    {
+      /*--------- Filter by search query ----------*/
+    }
     if (searchQuery) {
-      list = list.filter((user) =>
-        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.username.toLowerCase().includes(searchQuery.toLowerCase())
+      list = list.filter(
+        (user) =>
+          user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          user.username.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
