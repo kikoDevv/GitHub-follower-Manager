@@ -32,18 +32,32 @@ export default function Dashboard() {
   const nonFollowers = mockUsers.filter((user) => user.isFollowing && !user.followsBack);
 
   const getCurrentList = () => {
+    let list;
     switch (activeTab) {
       case "followers":
-        return followers;
+        list = followers;
+        break;
       case "following":
-        return following;
+        list = following;
+        break;
       case "mutual":
-        return mutual;
+        list = mutual;
+        break;
       case "non-followers":
-        return nonFollowers;
+        list = nonFollowers;
+        break;
       default:
-        return followers;
+        list = followers;
     }
+    {/*--------- Filter by search query ----------*/}
+    if (searchQuery) {
+      list = list.filter((user) =>
+        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.username.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    return list;
   };
 
   const handleFollow = (userId: number) => {
